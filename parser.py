@@ -9,6 +9,7 @@ import time
 # lxml is the main parser that we are using for better simplicity
 #from lxml import *
 import re
+import sys
 
 def getInformation(xmlTag, xmlLine):
     # get all of the information that is between the the xmlTag
@@ -89,7 +90,7 @@ def generatePDates(xmlfile):
     return
 
 def generatePrices(file):
-    #TODO: Change file name later
+
     fpw = open("prices.txt","w+")
     with open(file,"r") as fpr:
         for line in enumerate(fpr):
@@ -104,7 +105,7 @@ def generatePrices(file):
     return
 
 def generateAds(file):
-    #TODO: Change file name later
+
     fpw = open("ads.txt","w+")
     with open(file,"r") as fpr:
         for line in enumerate(fpr):
@@ -118,11 +119,11 @@ def generateAds(file):
 
 
 def main():
-     generateAds("data1k.xml")
-     generatePrices("data1k.xml")
-     generatePDates("data1k.xml")
-     generateTerms("data1k.xml")
-     return
+    generateAds(sys.argv[1])
+    generatePrices(sys.argv[1])
+    generatePDates(sys.argv[1])
+    generateTerms(sys.argv[1])
+    return
 
 if __name__ == "__main__":
     main()
