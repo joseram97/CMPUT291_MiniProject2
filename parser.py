@@ -45,11 +45,17 @@ def generateTerms(xmlfile):
                 id = getInformation("aid", line[1])
                 # get a list of the terms along with the identy of the ad
                 # set all of the compile patterns
-                replaceStr = re.compile("&#[0-9]+|&.*;")
-                splitStr = re.compile(" +|, +")
+                replaceStr = re.compile("&#[0-9]+;")
+                aposStr = re.compile("&apos;")
+                quotStr = re.compile("&quot;")
+                ampStr = re.compile("&amp;")
+                splitStr = re.compile("[, ]+|[^a-zA-Z0-9_-]")
                 checkTerm = re.compile("^[0-9a-zA-Z_-]+$")
 
                 totalString = replaceStr.sub("", totalString)
+                totalString = aposStr.sub("'", totalString)
+                totalString = quotStr.sub("\"", totalString)
+                totalString = ampStr.sub("&", totalString)
 
                 totalTerms = list(set(splitStr.split(totalString)))
                 for term in totalTerms:
