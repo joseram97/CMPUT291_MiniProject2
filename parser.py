@@ -55,8 +55,8 @@ def generateTerms(xmlfile):
             for term in totalTerms:
                 if len(term) > 2 and checkTerm.match(term) is not None:
                     # good to write to the terms.txt file
-                    termsFile.write(lower(term) + ":" + id)
-                    print(lower(term) + ":" + id) # make sure it works right
+                    termsFile.write(lower(term) + ":" + id + "\r\n")
+                    print(lower(term) + ":" + id + "\r\n") # make sure it works right
     xml.close()
     termsFile.close()
     return
@@ -78,8 +78,8 @@ def generatePDates(xmlfile):
             adID = getInformation("aid", line[1])
             category = getInformation("cat",line[1])
             location = getInformation("loc",line[1])
-            pdatesFile.write(date + ":" + adID + "," + category + "," + location)
-            print(date + ":" + adID + "," + category + "," + location)
+            pdatesFile.write(date + ":" + adID + "," + category + "," + location + "\r\n")
+            print(date + ":" + adID + "," + category + "," + location + "\r\n")
     pdatesFile.close()
     xml.close()
     return
