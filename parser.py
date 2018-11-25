@@ -41,17 +41,21 @@ def generateTerms(xmlfile):
             # the line needs to be parsed
             titleString = getInformation("ti", line[1])
             description = getInformation("desc", line[1])
+            totalString = titleString + " " + description
             id = getInformation("aid", line[1])
             # get a list of the terms along with the identy of the ad
-            # TODO: Add the correct regex to split
-            titleTerms = list(set(re.split("", titleString)))
-            descriptionTerms = list(set(re.split("", description)))
-            totalTerms = titleTerms + descriptionTerms
+            # set all of the compile patterns
+            replaceStr = re.compile("&#[0-9]+|&.*;")
+            splitStr = re.compile(" +|, +")
+            checkTerm = re.compile("^[0-9a-zA-Z_-]+$")
+
+            totalString = replaceStr.sub("", totalString)
+
+            totalTerms = list(set(splitStr.split(totalString)))
             for term in totalTerms:
                 # TODO: check if the term is a correct regex
-                if len(term) > 2:
+                if len(term) > 2 and checkTerm.match(term) is not None:
                     # good to write to the terms.txt file
-
                     termsFile.write(lower(term) + ":" + id)
                     print(lower(term) + ":" + id) # make sure it works right
     xml.close()
