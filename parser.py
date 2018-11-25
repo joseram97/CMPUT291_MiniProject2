@@ -23,12 +23,26 @@ def getInformation(xmlTag, xmlLine):
 
     return xmlLine[posStartTag:posEndTag]
 
+#might be deprecated
 def readXMLFile():
     # here we will be reading the xml or text file. From here we will be parsing it
 
     return
 
-def generateTerms():
+def generateTerms(xmlfile):
+    # this function is used to create the terms.txt file that is used for the
+    # index phase of the project
+
+    # create the terms.txt file
+    termsFile = open("terms.txt", "w")
+    # open the xml file and read from it line by line
+    with open(xmlfile, "r") as xml:
+        # process each of the lines
+        for line in xml:
+            if line[:4] == "<ad>":
+                # the line needs to be parsed
+
+
     return
 
 def generatePDates():
