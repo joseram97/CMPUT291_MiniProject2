@@ -37,7 +37,7 @@ def generateTerms(xmlfile):
     # index phase of the project
 
     # create the terms.txt file
-    termsFile = open("terms.txt", "w")
+    termsFile = open("terms.txt", "w+")
     # open the xml file and read from it line by line
     with open(xmlfile, "r") as xml:
         # process each of the lines
