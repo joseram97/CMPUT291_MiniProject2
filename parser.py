@@ -53,7 +53,6 @@ def generateTerms(xmlfile):
 
             totalTerms = list(set(splitStr.split(totalString)))
             for term in totalTerms:
-                # TODO: check if the term is a correct regex
                 if len(term) > 2 and checkTerm.match(term) is not None:
                     # good to write to the terms.txt file
                     termsFile.write(lower(term) + ":" + id)
