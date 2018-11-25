@@ -8,6 +8,7 @@ import sqlite3
 import time
 # lxml is the main parser that we are using for better simplicity
 #from lxml import *
+import re
 
 def getInformation(xmlTag, xmlLine):
     # get all of the information that is between the the xmlTag
@@ -26,12 +27,6 @@ def getInformation(xmlTag, xmlLine):
     else:
         return ""
 
-#might be deprecated
-def readXMLFile():
-    # here we will be reading the xml or text file. From here we will be parsing it
-
-    return
-
 def generateTerms(xmlfile):
     # this function is used to create the terms.txt file that is used for the
     # index phase of the project
@@ -39,16 +34,51 @@ def generateTerms(xmlfile):
     # create the terms.txt file
     termsFile = open("terms.txt", "w+")
     # open the xml file and read from it line by line
-    with open(xmlfile, "r") as xml:
-        # process each of the lines
-        for line in xml:
-            if line[:4] == "<ad>":
-                # the line needs to be parsed
+    xml = open(xmlfile, "r")
+    # process each of the lines
+    for line in enumerate(xml):
+        if getInformation("ad", line[1]) is not "":
+            # the line needs to be parsed
+            titleString = getInformation("ti", line[1])
+            description = getInformation("desc", line[1])
+            id = getInformation("aid", line[1])
+            # get a list of the terms along with the identy of the ad
+            # TODO: Add the correct regex to split
+            titleTerms = list(set(re.split("", titleString)))
+            descriptionTerms = list(set(re.split("", description)))
+            totalTerms = titleTerms + descriptionTerms
+            for term in totalTerms:
+                # TODO: check if the term is a correct regex
+                if len(term) > 2:
+                    # good to write to the terms.txt file
 
-
+                    termsFile.write(lower(term) + ":" + id)
+                    print(lower(term) + ":" + id) # make sure it works right
+    xml.close()
+    termsFile.close()
     return
 
-def generatePDates():
+def generatePDates(xmlfile):
+    # this function is used to create the pdates.txt file that is used for the
+    # index phase of the project
+
+    # create the pdates.txt file
+    pdatesFile = open("pdates.txt", "w+")
+    # open the xml file
+    xml = open(xmlfile, "r")
+
+    # process each of the lines
+    for line in enumerate(xml):
+        if getInformation("ad", line[1]) is not "":
+            # get the desired information
+            date = getInformation("date", line[1])
+            adID = getInformation("aid", line[1])
+            category = getInformation("cat",line[1])
+            location = getInformation("loc",line[1])
+            pdatesFile.write(date + ":" + adID + "," + category + "," + location)
+            print(date + ":" + adID + "," + category + "," + location)
+    pdatesFile.close()
+    xml.close()
     return
 
 def generatePrices():
