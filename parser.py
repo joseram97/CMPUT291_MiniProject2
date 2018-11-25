@@ -41,19 +41,22 @@ def generateTerms(xmlfile):
             # the line needs to be parsed
             titleString = getInformation("ti", line[1])
             description = getInformation("desc", line[1])
+            totalString = titleString + " " + description
             id = getInformation("aid", line[1])
             # get a list of the terms along with the identy of the ad
-            # TODO: Add the correct regex to split
-            titleTerms = list(set(re.split("", titleString)))
-            descriptionTerms = list(set(re.split("", description)))
-            totalTerms = titleTerms + descriptionTerms
-            for term in totalTerms:
-                # TODO: check if the term is a correct regex
-                if len(term) > 2:
-                    # good to write to the terms.txt file
+            # set all of the compile patterns
+            replaceStr = re.compile("&#[0-9]+|&.*;")
+            splitStr = re.compile(" +|, +")
+            checkTerm = re.compile("^[0-9a-zA-Z_-]+$")
 
-                    termsFile.write(lower(term) + ":" + id)
-                    print(lower(term) + ":" + id) # make sure it works right
+            totalString = replaceStr.sub("", totalString)
+
+            totalTerms = list(set(splitStr.split(totalString)))
+            for term in totalTerms:
+                if len(term) > 2 and checkTerm.match(term) is not None:
+                    # good to write to the terms.txt file
+                    termsFile.write(lower(term) + ":" + id + "\r\n")
+                    print(lower(term) + ":" + id + "\r\n") # make sure it works right
     xml.close()
     termsFile.close()
     return
@@ -75,8 +78,8 @@ def generatePDates(xmlfile):
             adID = getInformation("aid", line[1])
             category = getInformation("cat",line[1])
             location = getInformation("loc",line[1])
-            pdatesFile.write(date + ":" + adID + "," + category + "," + location)
-            print(date + ":" + adID + "," + category + "," + location)
+            pdatesFile.write(date + ":" + adID + "," + category + "," + location + "\r\n")
+            print(date + ":" + adID + "," + category + "," + location + "\r\n")
     pdatesFile.close()
     xml.close()
     return
