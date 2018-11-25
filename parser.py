@@ -9,6 +9,30 @@ import time
 # lxml is the main parser that we are using for better simplicity
 from lxml import *
 
-def reafXMLFile():
+def getInformation(xmlTag, xmlLine):
+    # get all of the information that is between the the xmlTag
+    # xmlTag format: "ad" where it is part of <ad></ad>
+    # return: the returned string is the information within the tags
+
+    startTag = "<" + xmlTag + ">"
+    endTag = "</" + xmlTag + ">"
+    startTagLen = len(startTag)
+
+    posStartTag = xmlLine.find(startTag) + startTagLen
+    posEndTag = xmlLine.find(endTag)
+
+    return xmlLine[posStartTag:posEndTag]
+
+def readXMLFile():
+    # here we will be reading the xml or text file. From here we will be parsing it
 
     return
+
+# def main():
+#     # test the functions
+#     xmltest = "<ad> This is a testing string</ad>"
+#     print(getInformation("ad", xmltest))
+#     return
+#
+# if __name__ == "__main__":
+#     main()
