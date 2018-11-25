@@ -91,7 +91,7 @@ def generatePrices(file):
             adID = getInformation("aid",line[1])
             category = getInformation("cat",line[1])
             location = getInformation("loc",line[1])
-            fpw.write(price + "," + adID + "," + category + "," + location + "\r\n")
+            fpw.write(price + ":" + adID + "," + category + "," + location + "\r\n")
             print(price + ":" + adID + "," + category + "," + location)
     fpr.close()
     fpw.close()
@@ -116,8 +116,8 @@ def main():
      # test the functions
      #xmltest = "<ad> This is a testing string</ad>"
      #print(getInformation("ad", xmltest))
-     generateAds("data.xml")
-     generatePrices("data.xml")
+     generateAds("data1k.xml")
+     generatePrices("data1k.xml")
      return
 
 if __name__ == "__main__":
