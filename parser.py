@@ -7,7 +7,7 @@
 import sqlite3
 import time
 # lxml is the main parser that we are using for better simplicity
-from lxml import *
+#from lxml import *
 
 def getInformation(xmlTag, xmlLine):
     # get all of the information that is between the the xmlTag
@@ -21,7 +21,10 @@ def getInformation(xmlTag, xmlLine):
     posStartTag = xmlLine.find(startTag) + startTagLen
     posEndTag = xmlLine.find(endTag)
 
-    return xmlLine[posStartTag:posEndTag]
+    if(posStartTag != -1 and posEndTag != -1):
+        return xmlLine[posStartTag:posEndTag]
+    else:
+        return ""
 
 def readXMLFile():
     # here we will be reading the xml or text file. From here we will be parsing it
@@ -35,16 +38,31 @@ def generatePDates():
     return
 
 def generatePrices():
+    #TODO: Change file name later
+    fpr = open("data.xml")
+    fpw = open("prices.txt","w+")
+    for line in enumerate(fpr):
+        if getInformation("ad",line[1]) is not "":
+            price = getInformation("price",line[1])
+            adID = getInformation("aid",line[1])
+            category = getInformation("cat",line[1])
+            location = getInformation("loc",line[1])
+            fpw.write(price + "," + adID + "," + category + "," + location + "\r\n")
+            print(price + "," + adID + "," + category + "," + location)
+    fpr.close()
+    fpw.close()
     return
 
 def generateAds():
     return
 
-# def main():
-#     # test the functions
-#     xmltest = "<ad> This is a testing string</ad>"
-#     print(getInformation("ad", xmltest))
-#     return
-#
-# if __name__ == "__main__":
-#     main()
+
+def main():
+     # test the functions
+     #xmltest = "<ad> This is a testing string</ad>"
+     #print(getInformation("ad", xmltest))
+     generatePrices()
+     return
+
+if __name__ == "__main__":
+    main()
