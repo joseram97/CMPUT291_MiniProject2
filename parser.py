@@ -28,6 +28,18 @@ def readXMLFile():
 
     return
 
+def generateTerms():
+    return
+
+def generatePDates():
+    return
+
+def generatePrices():
+    return
+
+def generateAds():
+    return
+
 # def main():
 #     # test the functions
 #     xmltest = "<ad> This is a testing string</ad>"
