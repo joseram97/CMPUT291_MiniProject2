@@ -37,9 +37,9 @@ def generateTerms():
 def generatePDates():
     return
 
-def generatePrices():
+def generatePrices(file):
     #TODO: Change file name later
-    fpr = open("data.xml")
+    fpr = open(file)
     fpw = open("prices.txt","w+")
     for line in enumerate(fpr):
         if getInformation("ad",line[1]) is not "":
@@ -48,12 +48,23 @@ def generatePrices():
             category = getInformation("cat",line[1])
             location = getInformation("loc",line[1])
             fpw.write(price + "," + adID + "," + category + "," + location + "\r\n")
-            print(price + "," + adID + "," + category + "," + location)
+            print(price + ":" + adID + "," + category + "," + location)
     fpr.close()
     fpw.close()
     return
 
-def generateAds():
+def generateAds(file):
+    #TODO: Change file name later
+    fpr = open(file)
+    fpw = open("ads.txt","w+")
+    for line in enumerate(fpr):
+        if getInformation("ad",line[1]) is not "":
+            adID = getInformation("aid",line[1])
+            ad = "<ad>" + getInformation("ad",line[1]) + "</ad>"
+            fpw.write(adID + ":" + ad + "\r\n")
+            print(adID + ":" + ad)
+    fpr.close()
+    fpw.close()
     return
 
 
@@ -61,7 +72,8 @@ def main():
      # test the functions
      #xmltest = "<ad> This is a testing string</ad>"
      #print(getInformation("ad", xmltest))
-     generatePrices()
+     generateAds("data.xml")
+     generatePrices("data.xml")
      return
 
 if __name__ == "__main__":
