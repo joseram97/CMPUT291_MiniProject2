@@ -56,7 +56,7 @@ def generateTerms(xmlfile):
                 if len(term) > 2 and checkTerm.match(term) is not None:
                     # good to write to the terms.txt file
                     termsFile.write(str.lower(term) + ":" + id + "\r\n")
-                    print(str.lower(term) + ":" + id) # make sure it works right
+                    #print(str.lower(term) + ":" + id) # make sure it works right
     xml.close()
     termsFile.close()
     return
@@ -79,7 +79,7 @@ def generatePDates(xmlfile):
             category = getInformation("cat",line[1])
             location = getInformation("loc",line[1])
             pdatesFile.write(date + ":" + adID + "," + category + "," + location + "\r\n")
-            print(date + ":" + adID + "," + category + "," + location + "\r\n")
+            #print(date + ":" + adID + "," + category + "," + location + "\r\n")
     pdatesFile.close()
     xml.close()
     return
@@ -95,7 +95,7 @@ def generatePrices(file):
             category = getInformation("cat",line[1])
             location = getInformation("loc",line[1])
             fpw.write(price + ":" + adID + "," + category + "," + location + "\r\n")
-            print(price + ":" + adID + "," + category + "," + location)
+            #print(price + ":" + adID + "," + category + "," + location)
     fpr.close()
     fpw.close()
     return
@@ -109,7 +109,7 @@ def generateAds(file):
             adID = getInformation("aid",line[1])
             ad = "<ad>" + getInformation("ad",line[1]) + "</ad>"
             fpw.write(adID + ":" + ad + "\r\n")
-            print(adID + ":" + ad)
+            #print(adID + ":" + ad)
     fpr.close()
     fpw.close()
     return
