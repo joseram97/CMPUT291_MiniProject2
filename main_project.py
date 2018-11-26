@@ -31,14 +31,17 @@ def initDBs():
 def printQuery(adsList,mode="full"):
     # Parameters:
     #   queryResult - is the list of rows from the query result
-
+    idx = 1
     if mode == "full":
         for x in adsList:
-            print("Ad Id: " + x[0].decode("utf-8"))
-            print("Ad Info: " + x[1].decode("utf-8"))
+            print(str(idx) + ": " + "Ad Id= " + x[0].decode("utf-8"))
+            print("Ad Info= " + x[1].decode("utf-8"))
+            idx += 1
     elif mode == "brief":
         for x in adsList:
-            print("Ad Id: " + x[0].decode("utf-8") + " Title: " + getInformation("ti",x[1].decode("utf-8")))
+            print(str(idx) + ": " + "Ad Id= " + x[0].decode("utf-8") + " Title= " + getInformation("ti",x[1].decode("utf-8")))
+            idx += 1
+
     return
 
 def query(output, condition):
@@ -181,7 +184,6 @@ def queryMainKey(expression, type):
 
     lowerStr = str.lower(expression)
     strSign = lowerStr.strip(type)
-    print(strSign)
     content = strSign.strip(">=<")
 
     outlines = []
@@ -205,7 +207,6 @@ def queryMainKey(expression, type):
         iter = curs.next_dup()
 
     if "=" in strSign:
-        print("equal")
         for x in equals:
             outlines.append(x)
 
@@ -220,16 +221,17 @@ def queryMainKey(expression, type):
             next = curs.next()
     elif "<" in strSign:
         ##GO back
-        next = curs.prev_nodup()
+        next = curs.prev()
         while next:
             ln = next[1].decode("utf-8").strip(" \n")
             lines = ln.split(",")
             adID = lines[0]
             outlines.append(adID)
-            next = curs.prev_nodup()
+            next = curs.prev()
 
 
-    print("Print for "+ type)
+
+    #print("Print for "+ type)
     #for i in enumerate(outlines):
     #  print(i)
 
