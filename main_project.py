@@ -38,7 +38,6 @@ def printQuery(adsList,mode="full"):
             idx += 1
     elif mode == "brief":
         for x in adsList:
-            #print(x)
             print(str(idx) + ": " + "Ad Id= " + x[0].decode("utf-8") + " Title= " + getInformation("ti",x[1].decode("utf-8")))
             idx += 1
 

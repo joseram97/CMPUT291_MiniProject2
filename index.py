@@ -20,6 +20,11 @@ def insertAds(database):
     fpr = open("ads.txt")
     for line in enumerate(fpr):
         sp = line[1].split(":") # 0 is key 1 is data
+        if len(sp) > 2:
+            i = 2
+            while i < len(sp):
+                sp[1] += sp[i]
+                i += 1
         database.put(bytes(sp[0],"utf-8"),sp[1])
 
 #####################################
