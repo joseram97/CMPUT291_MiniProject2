@@ -114,9 +114,9 @@ def query(output, condition):
 
 def queryMainKey(expression, type):
 
-    lowerStr = str.lower(dq)
-    strSign = lowerStr.strip("date")
-    content = tq.strip(">=<")
+    lowerStr = str.lower(expression)
+    strSign = lowerStr.strip(type)
+    content = strSign.strip(">=<")
 
     outlines = []
     equals = [] #Filled with equal dates, added if = is present
@@ -131,7 +131,10 @@ def queryMainKey(expression, type):
     # use the cursor
     iter = curs.current()
     while iter:
-        equals.append(iter[1].decode("utf-8"))
+        ln = iter[1].decode("utf-8").strip(" \n")
+        lines = ln.split(",")
+        adID = lines[0]
+        equals.append(adID)
         iter = curs.next_dup()
 
     if "=" in strSign:
@@ -142,19 +145,25 @@ def queryMainKey(expression, type):
         ##Go forward
         next = curs.next()
         while next:
-            outlines.append(next[1].decode("utf-8"))
+            ln = next[1].decode("utf-8").strip(" \n")
+            lines = ln.split(",")
+            adID = lines[0]
+            outlines.append(adID)
             next = curs.next()
     elif "<" in strSign:
         ##GO back
         next = curs.prev_nodup()
         while next:
-            outlines.append(next[1].decode("utf-8"))
+            ln = next[1].decode("utf-8").strip(" \n")
+            lines = ln.split(",")
+            adID = lines[0]
+            outlines.append(adID)
             next = curs.prev_nodup()
 
 
-
-    #for i in enumerate(outlines):
-    #    print(i)
+    print("Print for "+ type)
+    for i in enumerate(outlines):
+       print(i)
 
     return outlines
 
@@ -227,54 +236,7 @@ def termComp(ourSearchKey, treeKey):
 ################# DATES ###########################
 
 def queryDate(dq):
-    ##
-    tq = str.lower(dq)
-    tq = tq.strip("date")
-    dt = tq.strip(">=<")
-
-    outlines = []
-    equals = [] #Filled with equal dates, added if = is present
-    db = databaseDa
-    curs = db.cursor()
-    curs.set_range(dt.encode("utf-8"))
-    # use the cursor
-    iter = curs.current()
-    while iter:
-        ln = iter[1].decode("utf-8").strip(" \n")
-        lines = ln.split(",")
-        adID = lines[0]
-        equals.append(adID)
-        iter = curs.next_dup()
-
-    if "=" in tq:
-        for x in enumerate(equals):
-            outlines.append(x[1])
-
-    if ">" in tq:
-        ##Go forward
-        next = curs.next()
-        while next:
-            ln = next[1].decode("utf-8").strip(" \n")
-            lines = ln.split(",")
-            adID = lines[0]
-            outlines.append(adID)
-            next = curs.next()
-    elif "<" in tq:
-        ##GO back
-        next = curs.prev_nodup()
-        while next:
-            ln = next[1].decode("utf-8").strip(" \n")
-            lines = ln.split(",")
-            adID = lines[0]
-            outlines.append(adID)
-            next = curs.prev_nodup()
-
-
-
-    for i in enumerate(outlines):
-        print(i)
-
-    return outlines
+    return queryMainKey(dq, "date")
 
 def dateComp(ourSearchKey, treeKey):
     if ourSearchKey == treeKey:
@@ -358,6 +320,7 @@ def main():
     queryTerm("cAmEra%")
     queryDate("date>=2018/11/05")
     queryCats("cat=art-collectibles")
+    queryPrice("price=100")
     ##
 
     print("Welcome to the query interface! Please ensure that the following files")
