@@ -91,14 +91,19 @@ def query(output, condition):
             #check if each of the conditions match an existing one
             if re.match(dateQueryPattern, exp) is not None:
                 # handle the query for date
+                print(exp)
             elif re.match(priceQueryPattern, exp) is not None:
                 # handle the query for price
+                print(exp)
             elif re.match(locationQueryPattern, exp) is not None:
                 # handle the query for location
+                print(exp)
             elif re.match(catQuery, exp) is not None:
                 # handle the query for the category
+                print(exp)
             elif re.match(termQuery, exp) is not None:
                 # handle the query for terms
+                print(exp)
     else:
         return "Query condition was not in the correct format. Please try again"
 
@@ -107,10 +112,15 @@ def query(output, condition):
 
 ################# TERMS ###########################
 
-def queryTerm(tq, suffix=False):
+def queryTerm(tq):
     ## At this point, if our query has a suffix (%) it has been removed from the string and suffix is true
     ## Returns a list of tuples (b'key',b'data')
     ## THE ABOVE DATA MUST BE DECODED WHEN USED
+    suffix = False
+    if "%" in tq:
+        suffix = True
+        tq = tq.strip("%")
+
     tq = str.lower(tq)
     outlines = []
     db = databaseTe
@@ -131,7 +141,11 @@ def queryTerm(tq, suffix=False):
         else:
             done = True
 
-    #print(outlines)
+
+    for i in enumerate(outlines):
+        print(i)
+
+
     return outlines
 
 def termComp(ourSearchKey, treeKey):
@@ -160,7 +174,7 @@ def queryDate(dq):
     # use the cursor
     iter = curs.current()
     while iter:
-        equals.append(iter[0].decode("utf-8"))
+        equals.append(iter[1].decode("utf-8"))
         iter = curs.next_dup()
 
     if "=" in tq:
@@ -171,19 +185,19 @@ def queryDate(dq):
         ##Go forward
         next = curs.next()
         while next:
-            outlines.append(next[0].decode("utf-8"))
+            outlines.append(next[1].decode("utf-8"))
             next = curs.next()
     elif "<" in tq:
         ##GO back
         next = curs.prev_nodup()
         while next:
-            outlines.append(next[0].decode("utf-8"))
+            outlines.append(next[1].decode("utf-8"))
             next = curs.prev_nodup()
 
 
 
-    for i in enumerate(outlines):
-        print(i)
+    #for i in enumerate(outlines):
+    #    print(i)
 
     return outlines
 
@@ -240,7 +254,7 @@ def main():
     print("- te.idx\n")
     print("If not please make those files with the parser.py and the index.py program.\n")
     initDBs()
-    queryTerm("cAmEra",True)
+    queryTerm("cAmEra%")
     queryDate("date>=2018/11/05")
     main_loop()
 
