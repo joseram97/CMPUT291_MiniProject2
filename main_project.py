@@ -83,6 +83,8 @@ def query(output, condition):
     queryRe = re.compile(query)
     expressionSplit = re.compile(expression)
 
+    ads = set() # Set with ad ids
+    setInit = False #Necessary to prevent duplicates
     # check if the condition is in the correct format
     if queryRe.match(condition) is not None:
         # continue with the query
@@ -93,7 +95,17 @@ def query(output, condition):
             #check if each of the conditions match an existing one
             if re.match(dateQueryPattern, exp) is not None:
                 # handle the query for date
-                print(exp)
+                dates = queryDate(exp)
+                dts = set()
+                for i in dates:
+                    dts.add(i)
+                if len(ads) is 0 and not setInit:
+                    #on 0 len fill the new set
+                    ads = ads.union(dts)
+                    setInit = True
+                else:
+                    #else check for intersection
+                    ads = ads.intersection(dts)
             elif re.match(priceQueryPattern, exp) is not None:
                 # handle the query for price
                 print(exp)
@@ -102,13 +114,39 @@ def query(output, condition):
                 print(exp)
             elif re.match(catQuery, exp) is not None:
                 # handle the query for the category
-                print(exp)
+                cats = queryCats(exp)
+                cts = set()
+                for i in cats:
+                    #init set for adding/intersecting
+                    cts.add(i)
+                if len(ads) is 0 and not setInit:
+                    #on 0 len fill the new set
+                    ads = ads.union(cts)
+                    setInit = True
+                else:
+                    #else intersect
+                    ads = ads.intersection(cts)
             elif re.match(termQuery, exp) is not None:
                 # handle the query for terms
-                print(exp)
+                # TODO: Not catching wildcard
+                terms = queryTerm(exp)
+                ts = set()
+                for i in terms:
+                    #init set for adding
+                    ts.add(i)
+                if len(ads) is 0 and not setInit:
+                    #add if new set
+                    ads = ads.union(ts)
+                    setInit = True
+                else:
+                    #else intersect
+                    ads = ads.intersection(ts)
     else:
         return "Query condition was not in the correct format. Please try again"
-
+    adsList = queryAds(ads)
+    for x in adsList:
+        print("Ad Id: " + x[0].decode("utf-8"))
+        print("Ad Info: " + x[1].decode("utf-8"))
 
     return "Under Construction"
 
@@ -162,8 +200,8 @@ def queryMainKey(expression, type):
 
 
     print("Print for "+ type)
-    for i in enumerate(outlines):
-       print(i)
+    #for i in enumerate(outlines):
+    #  print(i)
 
     return outlines
 
@@ -266,7 +304,54 @@ def termComp(ourSearchKey, treeKey):
 ################# DATES ###########################
 
 def queryDate(dq):
-    return queryMainKey(dq, "date")
+    ##
+    tq = str.lower(dq)
+    tq = tq.strip("date")
+    dt = tq.strip(">=<")
+
+    outlines = []
+    equals = [] #Filled with equal dates, added if = is present
+    db = databaseDa
+    curs = db.cursor()
+    curs.set_range(dt.encode("utf-8"))
+    # use the cursor
+    iter = curs.current()
+    while iter:
+        ln = iter[1].decode("utf-8").strip(" \n")
+        lines = ln.split(",")
+        adID = lines[0]
+        equals.append(adID)
+        iter = curs.next_dup()
+
+    if "=" in tq:
+        for x in enumerate(equals):
+            outlines.append(x[1])
+
+    if ">" in tq:
+        ##Go forward
+        next = curs.next()
+        while next:
+            ln = next[1].decode("utf-8").strip(" \n")
+            lines = ln.split(",")
+            adID = lines[0]
+            outlines.append(adID)
+            next = curs.next()
+    elif "<" in tq:
+        ##GO back
+        next = curs.prev_nodup()
+        while next:
+            ln = next[1].decode("utf-8").strip(" \n")
+            lines = ln.split(",")
+            adID = lines[0]
+            outlines.append(adID)
+            next = curs.prev_nodup()
+
+
+
+    #for i in enumerate(outlines):
+    #    print(i)
+
+    return outlines
 
 def dateComp(ourSearchKey, treeKey):
     if ourSearchKey == treeKey:
@@ -307,6 +392,19 @@ def queryCats(cq):
     return outlines
 
 ################# CATS ###########################
+
+################# ADS ###########################
+def queryAds(adList):
+    ##
+    outlines = []
+    db = databaseAd
+    curs = db.cursor()
+
+    for i in adList:
+        outlines.append(curs.set(i.encode("utf-8")))
+
+    return outlines
+################# ADS ###########################
 
 
 def main_loop():
