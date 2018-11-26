@@ -127,7 +127,7 @@ def queryTerm(tq, suffix=False):
             outlines.append(next[1].decode("utf-8"))
         else:
             done = True
-            
+
     #print(outlines)
     return outlines
 
