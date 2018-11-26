@@ -1,5 +1,6 @@
 import os
 from bsddb3 import db
+import time
 
 
 def sysSort(file):
@@ -84,14 +85,24 @@ def insertPrices(database):
 def main():
     #the main code for the software applications
     #enable a print to ask the user for their username
+    startSort = time.clock()
+    print("Starting sorting...")
     sysSort("prices.txt")
     sysSort("ads.txt")
     sysSort("terms.txt")
     sysSort("pdates.txt")
+    endSort = time.clock()
+    sortTime = "Sorting complete. Time Elapsed: {0}sec".format(endSort - startSort)
+    print(sortTime)
+    print("Creating index dbs'...")
+    startIdx = time.clock()
     initDBAd()
     initDBTerms()
     initDBPDates()
     initDBPr()
+    endIdx = time.clock()
+    idxTime = "Index dbs' created. Time Elapsed: {0}sec".format(endIdx - startIdx)
+    print(idxTime)
     return
 
 if __name__ == "__main__":
