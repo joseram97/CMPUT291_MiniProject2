@@ -21,7 +21,6 @@ def initDBs():
     ##Comp function must be set before opening
     databaseTe.set_bt_compare(termComp)
     databaseDa.set_bt_compare(dateComp)
-    databasePr.set_bt_compare(priceComp)
     databasePr.open("pr.idx")
     databaseAd.open("ad.idx")
     databaseTe.open("te.idx")
@@ -39,6 +38,7 @@ def printQuery(adsList,mode="full"):
             idx += 1
     elif mode == "brief":
         for x in adsList:
+            #print(x)
             print(str(idx) + ": " + "Ad Id= " + x[0].decode("utf-8") + " Title= " + getInformation("ti",x[1].decode("utf-8")))
             idx += 1
 
@@ -196,10 +196,11 @@ def queryMainKey(expression, type):
 
     curs = db.cursor()
     content = "{:>12}".format(content)
+    curs.first()
     curs.set_range(content.encode("utf-8"))
     # use the cursor
     iter = curs.current()
-    while iter:
+    while iter and iter[0].decode("utf-8") == content:
         ln = iter[1].decode("utf-8").strip(" \n")
         lines = ln.split(",")
         adID = lines[0]
@@ -221,7 +222,7 @@ def queryMainKey(expression, type):
             next = curs.next()
     elif "<" in strSign:
         ##GO back
-        next = curs.prev()
+        next = curs.prev_nodup()
         while next:
             ln = next[1].decode("utf-8").strip(" \n")
             lines = ln.split(",")
@@ -241,13 +242,6 @@ def queryMainKey(expression, type):
 def queryPrice(price):
     return queryMainKey(price, "price")
 
-def priceComp(ourSearchKey, treeKey):
-    if ourSearchKey == treeKey:
-        return 0
-    if ourSearchKey > treeKey:
-        return 1
-    else:
-        return -1
 ################# PRICES ##########################
 
 ################# LOCATION ########################
@@ -339,10 +333,11 @@ def queryDate(dq):
     equals = [] #Filled with equal dates, added if = is present
     db = databaseDa
     curs = db.cursor()
+    curs.first()
     curs.set_range(dt.encode("utf-8"))
     # use the cursor
     iter = curs.current()
-    while iter:
+    while iter and iter[0].decode("utf-8") == dt:
         ln = iter[1].decode("utf-8").strip(" \n")
         lines = ln.split(",")
         adID = lines[0]
@@ -370,7 +365,7 @@ def queryDate(dq):
             lines = ln.split(",")
             adID = lines[0]
             outlines.append(adID)
-            next = curs.prev_nodup()
+            next = curs.prev()
 
 
 
@@ -475,7 +470,7 @@ def main():
     queryDate("date>=2018/11/05")
     queryCats("cat=art-collectibles")
     queryLoc("location=Edmonton")
-    queryPrice("price>0")
+    queryPrice("price<2")
     ##
 
     print("Welcome to the query interface! Please ensure that the following files")
