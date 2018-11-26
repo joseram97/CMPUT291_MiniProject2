@@ -116,6 +116,18 @@ def query(output, condition):
                     ads = ads.intersection(dts)
             elif re.match(priceQueryPattern, exp) is not None:
                 # handle the query for price
+                # pr = queryPrice(exp)
+                # prSet = set()
+                # for i in pr:
+                #     #init set for add/intersecting
+                #     prSet.add(i)
+                # if len(ads) is 0 and not setInit:
+                #     #on 0 len fill the new set
+                #     ads = ads.union(prSet)
+                #     setInit = True
+                # else:
+                #     # interset the remaining set
+                #     ads = ads.intersection(prSet)
                 print(exp)
             elif re.match(locationQueryPattern, exp) is not None:
                 # handle the query for location
