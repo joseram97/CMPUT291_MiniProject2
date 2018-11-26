@@ -19,6 +19,7 @@ databaseDa = db.DB()
 def initDBs():
     ##Comp function must be set before opening
     databaseTe.set_bt_compare(termComp)
+    databaseDa.set_bt_compare(dateComp)
     databasePr.open("pr.idx")
     databaseAd.open("ad.idx")
     databaseTe.open("te.idx")
@@ -104,6 +105,8 @@ def query(output, condition):
 
     return "Under Construction"
 
+################# TERMS ###########################
+
 def queryTerm(tq, suffix=False):
     ## At this point, if our query has a suffix (%) it has been removed from the string and suffix is true
     ## Returns a list of tuples (b'key',b'data')
@@ -138,6 +141,62 @@ def termComp(ourSearchKey, treeKey):
         return 1
     else:
         return -1
+
+################# TERMS ###########################
+
+################# DATES ###########################
+
+def queryDate(dq):
+    ##
+    tq = str.lower(dq)
+    tq = tq.strip("date")
+    dt = tq.strip(">=<")
+
+    outlines = []
+    equals = [] #Filled with equal dates, added if = is present
+    db = databaseDa
+    curs = db.cursor()
+    curs.set_range(dt.encode("utf-8"))
+    # use the cursor
+    iter = curs.current()
+    while iter:
+        equals.append(iter[0].decode("utf-8"))
+        iter = curs.next_dup()
+
+    if "=" in tq:
+        for x in enumerate(equals):
+            outlines.append(x[1])
+
+    if ">" in tq:
+        ##Go forward
+        next = curs.next()
+        while next:
+            outlines.append(next[0].decode("utf-8"))
+            next = curs.next()
+    elif "<" in tq:
+        ##GO back
+        next = curs.prev_nodup()
+        while next:
+            outlines.append(next[0].decode("utf-8"))
+            next = curs.prev_nodup()
+
+
+
+    for i in enumerate(outlines):
+        print(i)
+
+    return outlines
+
+def dateComp(ourSearchKey, treeKey):
+    if ourSearchKey == treeKey:
+        return 0
+    if ourSearchKey > treeKey:
+        return 1
+    else:
+        return -1
+
+################# DATES ###########################
+
 
 def main_loop():
     # start the while loop for the application. The user will be prompted to input
@@ -182,6 +241,7 @@ def main():
     print("If not please make those files with the parser.py and the index.py program.\n")
     initDBs()
     queryTerm("cAmEra",True)
+    queryDate("date>=2018/11/05")
     main_loop()
 
     print("Leaving the query interface application...Good bye!")
