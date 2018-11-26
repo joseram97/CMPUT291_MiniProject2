@@ -215,6 +215,12 @@ def queryPrice(price):
     return queryMainKey(price, "price")
 
 def priceComp(ourSearchKey, treeKey):
+    # ourSearchKey = int(ourSearchKey)
+    # treeKey = int(treeKey)
+    print(type(ourSearchKey))
+    print(type(treeKey))
+    print(ourSearchKey)
+    print(treeKey)
     if ourSearchKey == treeKey:
         return 0
     if ourSearchKey > treeKey:
@@ -225,7 +231,31 @@ def priceComp(ourSearchKey, treeKey):
 
 ################# LOCATION ########################
 def queryLoc(location):
-    return
+    #TODO: this may need to change to be faster
+    # for location we are going to be searching from the
+    location = str.lower(location)
+    location = location.replace("location", "")
+    loc = location.strip("=")
+    # we are going to get all of the aid based from the locations from the pdates
+    # index database
+    outlines = []
+    db = databaseDa
+    curs = db.cursor()
+    curs.first()
+    iter = curs.current()
+    while iter:
+        data = iter[1].decode("utf-8").strip(" \n")
+        list = data.split(",")
+        currentLoc = list[2]
+        if str.lower(currentLoc) == loc:
+            outlines.append(list[0])
+        iter = curs.next()
+
+    # for i in enumerate(outlines):
+    #    print(i)
+
+    return outlines
+
 ################# LOCATION ########################
 
 ################# TERMS ###########################
@@ -423,7 +453,8 @@ def main():
     queryTerm("cAmEra%")
     queryDate("date>=2018/11/05")
     queryCats("cat=art-collectibles")
-    queryPrice("price<=100")
+    queryLoc("location=Edmonton")
+    #queryPrice("price<=100")
     ##
 
     print("Welcome to the query interface! Please ensure that the following files")
