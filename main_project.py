@@ -74,7 +74,7 @@ def query(output, condition):
     priceQueryPattern = "price *(?:=|>|<|>=|<=) *[0-9]+"
     locationQueryPattern = "location *= *[0-9a-zA-Z_-]+"
     catQuery = "cat *= *[0-9a-zA-Z_-]+"
-    termQuery = "[0-9a-zA-Z_-]+|[0-9a-zA-Z_-]+%"
+    termQuery = "[0-9a-zA-Z_-]+%|[0-9a-zA-Z_-]+"
     # these 2 patterns we may not be using. Maybe just for error checking to make
     # sure that the queries are inputted correctly
     expression = "{0}|{1}|{2}|{3}|{4}".format(dateQueryPattern,
@@ -90,6 +90,7 @@ def query(output, condition):
         # continue with the query
         # split by the expressions to check what the expressions are individually
         listOfExp = expressionSplit.findall(condition)
+
         for exp in listOfExp:
             #check if each of the conditions match an existing one
             if re.match(dateQueryPattern, exp) is not None:
@@ -148,9 +149,9 @@ def query(output, condition):
 
 def queryMainKey(expression, type):
 
-    lowerStr = str.lower(dq)
-    strSign = lowerStr.strip("date")
-    content = tq.strip(">=<")
+    lowerStr = str.lower(expression)
+    strSign = lowerStr.strip(type)
+    content = strSign.strip(">=<")
 
     outlines = []
     equals = [] #Filled with equal dates, added if = is present
@@ -165,7 +166,10 @@ def queryMainKey(expression, type):
     # use the cursor
     iter = curs.current()
     while iter:
-        equals.append(iter[1].decode("utf-8"))
+        ln = iter[1].decode("utf-8").strip(" \n")
+        lines = ln.split(",")
+        adID = lines[0]
+        equals.append(adID)
         iter = curs.next_dup()
 
     if "=" in strSign:
@@ -176,19 +180,25 @@ def queryMainKey(expression, type):
         ##Go forward
         next = curs.next()
         while next:
-            outlines.append(next[1].decode("utf-8"))
+            ln = next[1].decode("utf-8").strip(" \n")
+            lines = ln.split(",")
+            adID = lines[0]
+            outlines.append(adID)
             next = curs.next()
     elif "<" in strSign:
         ##GO back
         next = curs.prev_nodup()
         while next:
-            outlines.append(next[1].decode("utf-8"))
+            ln = next[1].decode("utf-8").strip(" \n")
+            lines = ln.split(",")
+            adID = lines[0]
+            outlines.append(adID)
             next = curs.prev_nodup()
 
 
-
-    #for i in enumerate(outlines):
-    #    print(i)
+    print("Print for "+ type)
+    for i in enumerate(outlines):
+       print(i)
 
     return outlines
 
@@ -392,6 +402,7 @@ def main():
     queryTerm("cAmEra%")
     queryDate("date>=2018/11/05")
     queryCats("cat=art-collectibles")
+    queryPrice("price<=100")
     ##
 
     print("Welcome to the query interface! Please ensure that the following files")
