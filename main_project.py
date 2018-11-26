@@ -43,9 +43,8 @@ def printQuery(adsList,mode="full"):
 
     return
 
-def query(output, condition):
+def query(condition):
     # Parameters:
-    #   output - the output flag of how much to query. Either True or False
     #   condition - The condition statement of what to query for
 
     # need to parse the condition to determine the 5 type of queries
@@ -433,6 +432,7 @@ def main_loop():
     print("**Must input in the format 'output=full/brief condition'**")
     print("**To leave the application please type 'exit'\n")
     # set any variables
+    outputMode = "brief"
     while (True):
         # prompt the user for input
         inputStr = input(">> ")
@@ -441,20 +441,20 @@ def main_loop():
             break
         # get the split arguments. We are going to assume that the user put in the
         # correct format
-        outputArg = inputStr[:inputStr.find(" ")]
-        conditionArg = inputStr[inputStr.find(" ")+1:]
-        print("Output argument: " + outputArg)
-        print("Condition argument: " + conditionArg)
-
-
-        # get the description of the flag
-        outputFlag = False; # automatically is set to brief
-        outputArgFlag = outputArg.split("=")[1]
-        if (outputArgFlag == "full"):
-            outputFlag = True
-
-        queryResult = query(outputFlag, conditionArg)
-        printQuery(queryResult,outputArgFlag)
+        if "output" in inputStr:
+            # check what the output mode is
+            outputArgs = inputStr.split("=")
+            outputMode = outputArgs[1]
+            print("Output mode set to: " + outputMode)
+            continue
+        # otherwise the input string is the condition
+        conditionArg = inputStr
+        startQuery = time.clock()
+        queryResult = query(conditionArg)
+        printQuery(queryResult,outputMode)
+        endQuery = time.clock()
+        queryTime = "Elapsed time to query: {0}sec".format(endQuery-startQuery)
+        print(queryTime)
 
 
     return
