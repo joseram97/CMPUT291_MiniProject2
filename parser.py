@@ -10,6 +10,7 @@ import time
 #from lxml import *
 import re
 import sys
+import time
 
 def getInformation(xmlTag, xmlLine):
     # get all of the information that is between the the xmlTag
@@ -120,10 +121,17 @@ def generateAds(file):
 
 
 def main():
+    # start the time clock
+    start = time.clock()
     generateAds(sys.argv[1])
     generatePrices(sys.argv[1])
     generatePDates(sys.argv[1])
     generateTerms(sys.argv[1])
+    end = time.clock()
+
+    # print the elapsed time it took to create the files
+    timeElapse = "Files generated. Time elapsed: {0}sec".format(end-start)
+    print(timeElapse)
     return
 
 if __name__ == "__main__":
