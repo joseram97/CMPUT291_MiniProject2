@@ -181,8 +181,9 @@ def query(condition):
 def queryMainKey(expression, type):
 
     lowerStr = str.lower(expression)
+    print(expression)
     strSign = lowerStr.strip(type)
-    content = strSign.strip(">=<")
+    content = strSign.strip(" >=<")
 
     outlines = []
     equals = [] #Filled with equal dates, added if = is present
