@@ -143,7 +143,10 @@ def query(output, condition):
                     ads = ads.intersection(ts)
     else:
         return "Query condition was not in the correct format. Please try again"
-    print(ads)
+    adsList = queryAds(ads)
+    for x in adsList:
+        print("Ad Id: " + x[0].decode("utf-8"))
+        print("Ad Info: " + x[1].decode("utf-8"))
 
     return "Under Construction"
 
@@ -197,8 +200,8 @@ def queryMainKey(expression, type):
 
 
     print("Print for "+ type)
-    for i in enumerate(outlines):
-       print(i)
+    #for i in enumerate(outlines):
+    #  print(i)
 
     return outlines
 
@@ -359,6 +362,19 @@ def queryCats(cq):
     return outlines
 
 ################# CATS ###########################
+
+################# ADS ###########################
+def queryAds(adList):
+    ##
+    outlines = []
+    db = databaseAd
+    curs = db.cursor()
+
+    for i in adList:
+        outlines.append(curs.set(i.encode("utf-8")))
+
+    return outlines
+################# ADS ###########################
 
 
 def main_loop():
