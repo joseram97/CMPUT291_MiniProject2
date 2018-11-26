@@ -99,6 +99,7 @@ def generatePrices(file):
                 adID = getInformation("aid",line[1])
                 category = getInformation("cat",line[1])
                 location = getInformation("loc",line[1])
+                price = "{:>12}".format(price)
                 fpw.write(price + ":" + adID + "," + category + "," + location + "\r\n")
                 #print(price + ":" + adID + "," + category + "," + location)
     fpw.close()

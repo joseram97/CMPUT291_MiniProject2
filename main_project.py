@@ -170,6 +170,7 @@ def queryMainKey(expression, type):
 
     lowerStr = str.lower(expression)
     strSign = lowerStr.strip(type)
+    print(strSign)
     content = strSign.strip(">=<")
 
     outlines = []
@@ -181,6 +182,7 @@ def queryMainKey(expression, type):
         db = databasePr
 
     curs = db.cursor()
+    content = "{:>12}".format(content)
     curs.set_range(content.encode("utf-8"))
     # use the cursor
     iter = curs.current()
@@ -192,8 +194,9 @@ def queryMainKey(expression, type):
         iter = curs.next_dup()
 
     if "=" in strSign:
-        for x in enumerate(equals):
-            outlines.append(x[1])
+        print("equal")
+        for x in equals:
+            outlines.append(x)
 
     if ">" in strSign:
         ##Go forward
@@ -216,8 +219,8 @@ def queryMainKey(expression, type):
 
 
     print("Print for "+ type)
-    #for i in enumerate(outlines):
-    #  print(i)
+    for i in enumerate(outlines):
+      print(i)
 
     return outlines
 
@@ -459,7 +462,7 @@ def main():
     queryDate("date>=2018/11/05")
     queryCats("cat=art-collectibles")
     queryLoc("location=Edmonton")
-    queryPrice("price>100")
+    queryPrice("price>0")
     ##
 
     print("Welcome to the query interface! Please ensure that the following files")
