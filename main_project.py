@@ -119,7 +119,18 @@ def query(output, condition):
                 print(exp)
             elif re.match(locationQueryPattern, exp) is not None:
                 # handle the query for location
-                print(exp)
+                locs = queryLoc(exp)
+                lcs = set()
+                for i in locs:
+                    #init set for adding/intersecting
+                    lcs.add(i)
+                if len(ads) is 0 and not setInit:
+                    #on 0 len fill the new set
+                    ads = ads.union(lcs)
+                    setInit = True
+                else:
+                    #else intersect
+                    ads = ads.intersection(lcs)
             elif re.match(catQuery, exp) is not None:
                 # handle the query for the category
                 cats = queryCats(exp)
@@ -215,12 +226,6 @@ def queryPrice(price):
     return queryMainKey(price, "price")
 
 def priceComp(ourSearchKey, treeKey):
-    # ourSearchKey = int(ourSearchKey)
-    # treeKey = int(treeKey)
-    print(type(ourSearchKey))
-    print(type(treeKey))
-    print(ourSearchKey)
-    print(treeKey)
     if ourSearchKey == treeKey:
         return 0
     if ourSearchKey > treeKey:
@@ -251,7 +256,7 @@ def queryLoc(location):
             outlines.append(list[0])
         iter = curs.next()
 
-    # for i in enumerate(outlines):
+    #for i in enumerate(outlines):
     #    print(i)
 
     return outlines
@@ -454,7 +459,7 @@ def main():
     queryDate("date>=2018/11/05")
     queryCats("cat=art-collectibles")
     queryLoc("location=Edmonton")
-    #queryPrice("price<=100")
+    queryPrice("price>100")
     ##
 
     print("Welcome to the query interface! Please ensure that the following files")

@@ -65,6 +65,7 @@ def initDBPr():
     database = db.DB()
     DB_File = "pr.idx"
     database.set_flags(db.DB_DUP) #Important! declare duplicates allowed
+    database.set_bt_compare(pComp)
     database.open(DB_File,None,db.DB_BTREE,db.DB_CREATE)
     insertPrices(database)
     return
@@ -75,6 +76,14 @@ def insertPrices(database):
     for line in enumerate(fpr):
         sp = line[1].split(":") # 0 is key 1 is data
         database.put(bytes(sp[0],"utf-8"),sp[1])
+
+def pComp(ourSearchKey, treeKey):
+    if ourSearchKey == treeKey:
+        return 0
+    if ourSearchKey > treeKey:
+        return 1
+    else:
+        return -1
 
 #####################################
 
