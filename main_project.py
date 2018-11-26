@@ -18,8 +18,60 @@ def printQuery(queryResult):
 
 def query(output, condition):
     # Parameters:
-    #   output - the output flag of how much to query. Either "full" or "bried"
+    #   output - the output flag of how much to query. Either True or False
     #   condition - The condition statement of what to query for
+
+    # need to parse the condition to determine the 5 type of queries
+    # this is going to require regex
+
+    # the 5 terms to look for are as follows
+    # - term: will just be a word
+    # - date: the date and its ranges
+    # - price: the price range
+    # - location: check for the location
+    # - cat: check for the category of the ad
+
+    # use the following query library
+    # alphanumeric    ::= [0-9a-zA-Z_-]
+    # numeric		  ::= [0-9]
+    # date            ::= numeric numeric numeric numeric '/' numeric numeric '/' numeric numeric
+    # datePrefix      ::= 'date' whitespace* ('=' | '>' | '<' | '>=' | '<=')
+    # dateQuery       ::= datePrefix whitespace* date
+    # price		      ::= numeric+
+    # pricePrefix     ::= 'price' whitespace* ('=' | '>' | '<' | '>=' | '<=')
+    # priceQuery	  ::= pricePrefix whitespace* price
+    # location	      ::= alphanumeric+
+    # locationPrefix  ::= 'location' whitespace* '='
+    # locationQuery	  ::= locationPrefix whitespace* location
+    # cat		      ::= alphanumeric+
+    # catPrefix  	  ::= 'cat' whitespace* '='
+    # catQuery	      ::= catPrefix whitespace* cat
+    # term            ::= alphanumeric+
+    # termSuffix      ::= '%'
+    # termQuery       ::= term | term termSuffix
+    # expression      ::= dateQuery | priceQuery | locationQuery | catQuery | termQuery
+    # query           ::= expression (whitespace expression)*
+
+
+    dateQueryPattern = "date *(=|>|<|>=|<=) *[0-9]{4}/[0-9]{2}/[0-9]{2}"
+    priceQueryPattern = "price *(=|>|<|>=|<=) *[0-9]+"
+    locationQueryPattern = "location *= *[0-9a-zA-Z_-]+"
+    catQuery = "cat *= *[0-9a-zA-Z_-]+"
+    termQuery = "[0-9a-zA-Z_-]+|[0-9a-zA-Z_-]+%"
+    # these 2 patterns we may not be using. Maybe just for error checking to make
+    # sure that the queries are inputted correctly
+    expression = "{0}|{1}|{2}|{3}|{4}".format(dateQueryPattern,
+     priceQueryPattern, locationQueryPattern, catQuery, termQuery)
+    query = "{0}( {0})*".format(expression)
+    queryRe = re.compile(query)
+
+    # check if the condition is in the correct format
+    if queryRe.match(condition) is not None:
+        # continue with the query
+    else:
+        return "Query condition was not in the correct format. Please try again"
+
+
     return "Under Construction"
 
 def main_loop():
@@ -43,7 +95,11 @@ def main_loop():
 
 
         # get the description of the flag
-        outputFlag = outputArg.split("=")[1]
+        outputFlag = False; # automatically is set to brief
+        outputArgFlag = outputArg.split("=")[1]
+        if (outputArgFlag == "full"):
+            outputFlag = True
+
         queryResult = query(outputFlag, conditionArg)
         printQuery(queryResult)
 
