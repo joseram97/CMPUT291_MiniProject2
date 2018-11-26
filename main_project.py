@@ -290,7 +290,7 @@ def queryTerm(tq):
     curs.set_range(tq.encode("utf-8"))
      # use the cursor
     iter = curs.current()
-    while iter:
+    while iter and iter[0].decode("utf-8") == tq:
         outlines.append(iter[1].decode("utf-8").strip(" \n"))
         iter = curs.next_dup()
 
