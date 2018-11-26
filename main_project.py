@@ -5,6 +5,7 @@
 # desired queries and output the data, as well as some stats
 
 # may not need these
+from parser import *
 from bsddb3 import db
 import time
 # for the regex if required
@@ -27,10 +28,17 @@ def initDBs():
     databaseDa.open("da.idx")
     return
 
-def printQuery(queryResult):
+def printQuery(adsList,mode="full"):
     # Parameters:
     #   queryResult - is the list of rows from the query result
-    print(queryResult)
+
+    if mode == "full":
+        for x in adsList:
+            print("Ad Id: " + x[0].decode("utf-8"))
+            print("Ad Info: " + x[1].decode("utf-8"))
+    elif mode == "brief":
+        for x in adsList:
+            print("Ad Id: " + x[0].decode("utf-8") + " Title: " + getInformation("ti",x[1].decode("utf-8")))
     return
 
 def query(output, condition):
@@ -143,12 +151,9 @@ def query(output, condition):
                     ads = ads.intersection(ts)
     else:
         return "Query condition was not in the correct format. Please try again"
-    adsList = queryAds(ads)
-    for x in adsList:
-        print("Ad Id: " + x[0].decode("utf-8"))
-        print("Ad Info: " + x[1].decode("utf-8"))
 
-    return "Under Construction"
+    adsList = queryAds(ads)
+    return adsList
 
 def queryMainKey(expression, type):
 
@@ -404,7 +409,7 @@ def main_loop():
             outputFlag = True
 
         queryResult = query(outputFlag, conditionArg)
-        printQuery(queryResult)
+        printQuery(queryResult,outputArgFlag)
 
 
     return
