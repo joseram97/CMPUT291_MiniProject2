@@ -20,6 +20,7 @@ def initDBs():
     ##Comp function must be set before opening
     databaseTe.set_bt_compare(termComp)
     databaseDa.set_bt_compare(dateComp)
+    databasePr.set_bt_compare(priceComp)
     databasePr.open("pr.idx")
     databaseAd.open("ad.idx")
     databaseTe.open("te.idx")
@@ -110,6 +111,70 @@ def query(output, condition):
 
     return "Under Construction"
 
+def queryMainKey(expression, type):
+
+    lowerStr = str.lower(dq)
+    strSign = lowerStr.strip("date")
+    content = tq.strip(">=<")
+
+    outlines = []
+    equals = [] #Filled with equal dates, added if = is present
+    db = None
+    if type == "date":
+        db = databaseDa
+    elif type == "price":
+        db = databasePr
+
+    curs = db.cursor()
+    curs.set_range(content.encode("utf-8"))
+    # use the cursor
+    iter = curs.current()
+    while iter:
+        equals.append(iter[1].decode("utf-8"))
+        iter = curs.next_dup()
+
+    if "=" in strSign:
+        for x in enumerate(equals):
+            outlines.append(x[1])
+
+    if ">" in strSign:
+        ##Go forward
+        next = curs.next()
+        while next:
+            outlines.append(next[1].decode("utf-8"))
+            next = curs.next()
+    elif "<" in strSign:
+        ##GO back
+        next = curs.prev_nodup()
+        while next:
+            outlines.append(next[1].decode("utf-8"))
+            next = curs.prev_nodup()
+
+
+
+    #for i in enumerate(outlines):
+    #    print(i)
+
+    return outlines
+
+################# PRICES ##########################
+def queryPrice(price):
+    return queryMainKey(price, "price")
+
+def priceComp(ourSearchKey, treeKey):
+    if ourSearchKey == treeKey:
+        return 0
+    if ourSearchKey > treeKey:
+        return 1
+    else:
+        return -1
+################# PRICES ##########################
+
+################# LOCATION ########################
+def queryLoc(location):
+    return
+################# LOCATION ########################
+
 ################# TERMS ###########################
 
 def queryTerm(tq):
@@ -161,45 +226,7 @@ def termComp(ourSearchKey, treeKey):
 ################# DATES ###########################
 
 def queryDate(dq):
-    ##
-    tq = str.lower(dq)
-    tq = tq.strip("date")
-    dt = tq.strip(">=<")
-
-    outlines = []
-    equals = [] #Filled with equal dates, added if = is present
-    db = databaseDa
-    curs = db.cursor()
-    curs.set_range(dt.encode("utf-8"))
-    # use the cursor
-    iter = curs.current()
-    while iter:
-        equals.append(iter[1].decode("utf-8"))
-        iter = curs.next_dup()
-
-    if "=" in tq:
-        for x in enumerate(equals):
-            outlines.append(x[1])
-
-    if ">" in tq:
-        ##Go forward
-        next = curs.next()
-        while next:
-            outlines.append(next[1].decode("utf-8"))
-            next = curs.next()
-    elif "<" in tq:
-        ##GO back
-        next = curs.prev_nodup()
-        while next:
-            outlines.append(next[1].decode("utf-8"))
-            next = curs.prev_nodup()
-
-
-
-    #for i in enumerate(outlines):
-    #    print(i)
-
-    return outlines
+    return queryMainKey(dq, "date")
 
 def dateComp(ourSearchKey, treeKey):
     if ourSearchKey == treeKey:
