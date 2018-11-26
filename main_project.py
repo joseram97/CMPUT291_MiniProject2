@@ -88,6 +88,7 @@ def query(output, condition):
         # continue with the query
         # split by the expressions to check what the expressions are individually
         listOfExp = expressionSplit.findall(condition)
+
         for exp in listOfExp:
             #check if each of the conditions match an existing one
             if re.match(dateQueryPattern, exp) is not None:
