@@ -129,7 +129,7 @@ def queryTerm(tq):
      # use the cursor
     iter = curs.current()
     while iter:
-        outlines.append(iter[1].decode("utf-8"))
+        outlines.append(iter[1].decode("utf-8").strip(" \n"))
         iter = curs.next_dup()
 
     if suffix:
@@ -137,13 +137,13 @@ def queryTerm(tq):
         nextKey = next[0].decode("utf-8")
         done = False
         if tq in nextKey and not done:
-            outlines.append(next[1].decode("utf-8"))
+            outlines.append(next[1].decode("utf-8").strip(" \n"))
         else:
             done = True
 
 
-    for i in enumerate(outlines):
-        print(i)
+    #for i in enumerate(outlines):
+    #    print(i)
 
 
     return outlines
@@ -174,7 +174,10 @@ def queryDate(dq):
     # use the cursor
     iter = curs.current()
     while iter:
-        equals.append(iter[1].decode("utf-8"))
+        ln = iter[1].decode("utf-8").strip(" \n")
+        lines = ln.split(",")
+        adID = lines[0]
+        equals.append(adID)
         iter = curs.next_dup()
 
     if "=" in tq:
@@ -185,19 +188,25 @@ def queryDate(dq):
         ##Go forward
         next = curs.next()
         while next:
-            outlines.append(next[1].decode("utf-8"))
+            ln = next[1].decode("utf-8").strip(" \n")
+            lines = ln.split(",")
+            adID = lines[0]
+            outlines.append(adID)
             next = curs.next()
     elif "<" in tq:
         ##GO back
         next = curs.prev_nodup()
         while next:
-            outlines.append(next[1].decode("utf-8"))
+            ln = next[1].decode("utf-8").strip(" \n")
+            lines = ln.split(",")
+            adID = lines[0]
+            outlines.append(adID)
             next = curs.prev_nodup()
 
 
 
-    #for i in enumerate(outlines):
-    #    print(i)
+    for i in enumerate(outlines):
+        print(i)
 
     return outlines
 
@@ -210,6 +219,36 @@ def dateComp(ourSearchKey, treeKey):
         return -1
 
 ################# DATES ###########################
+
+################# CATS ###########################
+
+def queryCats(cq):
+    ##
+    cq = str.lower(cq)
+    cq = cq.strip("cat")
+    cq = cq.strip("=")
+    cq = cq.strip(" ")
+
+    outlines = []
+    db = databaseDa
+    curs = db.cursor()
+    # use the cursor
+    iter = curs.first()
+    while iter:
+        ln = iter[1].decode("utf-8").strip("\n")
+        lines = ln.split(",")
+        adID = lines[0]
+        cat = lines[1]
+        if str.lower(cq) == cat:
+            outlines.append(adID)
+        iter = curs.next()
+
+    #for i in enumerate(outlines):
+    #    print(i)
+
+    return outlines
+
+################# CATS ###########################
 
 
 def main_loop():
@@ -246,6 +285,15 @@ def main_loop():
 
 def main():
     # handle any initialization and make sure that the the files have been created
+
+    initDBs()
+
+    ##TESTS
+    queryTerm("cAmEra%")
+    queryDate("date>=2018/11/05")
+    queryCats("cat=art-collectibles")
+    ##
+
     print("Welcome to the query interface! Please ensure that the following files")
     print("Have been created:")
     print("- ad.idx")
@@ -253,9 +301,7 @@ def main():
     print("- pr.idx")
     print("- te.idx\n")
     print("If not please make those files with the parser.py and the index.py program.\n")
-    initDBs()
-    queryTerm("cAmEra%")
-    queryDate("date>=2018/11/05")
+
     main_loop()
 
     print("Leaving the query interface application...Good bye!")
