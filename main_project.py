@@ -53,8 +53,8 @@ def query(output, condition):
     # query           ::= expression (whitespace expression)*
 
 
-    dateQueryPattern = "date *(=|>|<|>=|<=) *[0-9]{4}/[0-9]{2}/[0-9]{2}"
-    priceQueryPattern = "price *(=|>|<|>=|<=) *[0-9]+"
+    dateQueryPattern = "date *(?:=|>|<|>=|<=) *[0-9]{4}/[0-9]{2}/[0-9]{2}"
+    priceQueryPattern = "price *(?:=|>|<|>=|<=) *[0-9]+"
     locationQueryPattern = "location *= *[0-9a-zA-Z_-]+"
     catQuery = "cat *= *[0-9a-zA-Z_-]+"
     termQuery = "[0-9a-zA-Z_-]+|[0-9a-zA-Z_-]+%"
@@ -64,10 +64,25 @@ def query(output, condition):
      priceQueryPattern, locationQueryPattern, catQuery, termQuery)
     query = "{0}( {0})*".format(expression)
     queryRe = re.compile(query)
+    expressionSplit = re.compile(expression)
 
     # check if the condition is in the correct format
     if queryRe.match(condition) is not None:
         # continue with the query
+        # split by the expressions to check what the expressions are individually
+        listOfExp = expressionSplit.findall(condition)
+        for exp in listOfExp:
+            #check if each of the conditions match an existing one
+            if re.match(dateQueryPattern, exp) is not None:
+                # handle the query for date
+            elif re.match(priceQueryPattern, exp) is not None:
+                # handle the query for price
+            elif re.match(locationQueryPattern, exp) is not None:
+                # handle the query for location
+            elif re.match(catQuery, exp) is not None:
+                # handle the query for the category
+            elif re.match(termQuery, exp) is not None:
+                # handle the query for terms
     else:
         return "Query condition was not in the correct format. Please try again"
 
