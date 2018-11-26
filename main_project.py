@@ -5,10 +5,25 @@
 # desired queries and output the data, as well as some stats
 
 # may not need these
-import sqlite3
+from bsddb3 import db
 import time
 # for the regex if required
 import re
+
+databasePr = db.DB()
+databaseAd = db.DB()
+databaseTe = db.DB()
+databaseDa = db.DB()
+
+
+def initDBs():
+    ##Comp function must be set before opening
+    databaseTe.set_bt_compare(termComp)
+    databasePr.open("pr.idx")
+    databaseAd.open("ad.idx")
+    databaseTe.open("te.idx")
+    databaseDa.open("da.idx")
+    return
 
 def printQuery(queryResult):
     # Parameters:
@@ -21,6 +36,39 @@ def query(output, condition):
     #   output - the output flag of how much to query. Either "full" or "bried"
     #   condition - The condition statement of what to query for
     return "Under Construction"
+
+def queryTerm(tq, suffix=False):
+    ## At this point, if our query has a suffix (%) it has been removed from the string and suffix is true
+    ## Returns a list of tuples (b'key',b'data')
+    ## THE ABOVE DATA MUST BE DECODED WHEN USED
+    outlines = []
+    db = databaseTe
+    curs = db.cursor()
+    outlines.append(curs.set_range(tq.encode("utf-8")))
+     # use the cursor
+    iter = curs.current()
+    while iter:
+        outlines.append(iter)
+        iter = curs.next_dup()
+
+    if suffix:
+        next = curs.next()
+        nextKey = next[0].decode("utf-8")
+        done = False
+        if tq in nextKey and not done:
+            outlines.append(next)
+        else:
+            done = True
+
+    return outlines
+
+def termComp(ourSearchKey, treeKey):
+    if ourSearchKey == treeKey:
+        return 0
+    if ourSearchKey > treeKey:
+        return 1
+    else:
+        return -1
 
 def main_loop():
     # start the while loop for the application. The user will be prompted to input
@@ -59,7 +107,8 @@ def main():
     print("- pr.idx")
     print("- te.idx\n")
     print("If not please make those files with the parser.py and the index.py program.\n")
-
+    initDBs()
+    queryTerm("camera",False)
     main_loop()
 
     print("Leaving the query interface application...Good bye!")
