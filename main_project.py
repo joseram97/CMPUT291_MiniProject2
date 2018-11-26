@@ -83,6 +83,8 @@ def query(output, condition):
     queryRe = re.compile(query)
     expressionSplit = re.compile(expression)
 
+    ads = set() # Set with ad ids
+    setInit = False #Necessary to prevent duplicates
     # check if the condition is in the correct format
     if queryRe.match(condition) is not None:
         # continue with the query
@@ -92,7 +94,17 @@ def query(output, condition):
             #check if each of the conditions match an existing one
             if re.match(dateQueryPattern, exp) is not None:
                 # handle the query for date
-                print(exp)
+                dates = queryDate(exp)
+                dts = set()
+                for i in dates:
+                    dts.add(i)
+                if len(ads) is 0 and not setInit:
+                    #on 0 len fill the new set
+                    ads = ads.union(dts)
+                    setInit = True
+                else:
+                    #else check for intersection
+                    ads = ads.intersection(dts)
             elif re.match(priceQueryPattern, exp) is not None:
                 # handle the query for price
                 print(exp)
@@ -101,13 +113,36 @@ def query(output, condition):
                 print(exp)
             elif re.match(catQuery, exp) is not None:
                 # handle the query for the category
-                print(exp)
+                cats = queryCats(exp)
+                cts = set()
+                for i in cats:
+                    #init set for adding/intersecting
+                    cts.add(i)
+                if len(ads) is 0 and not setInit:
+                    #on 0 len fill the new set
+                    ads = ads.union(cts)
+                    setInit = True
+                else:
+                    #else intersect
+                    ads = ads.intersection(cts)
             elif re.match(termQuery, exp) is not None:
                 # handle the query for terms
-                print(exp)
+                # TODO: Not catching wildcard
+                terms = queryTerm(exp)
+                ts = set()
+                for i in terms:
+                    #init set for adding
+                    ts.add(i)
+                if len(ads) is 0 and not setInit:
+                    #add if new set
+                    ads = ads.union(ts)
+                    setInit = True
+                else:
+                    #else intersect
+                    ads = ads.intersection(ts)
     else:
         return "Query condition was not in the correct format. Please try again"
-
+    print(ads)
 
     return "Under Construction"
 
@@ -270,8 +305,8 @@ def queryDate(dq):
 
 
 
-    for i in enumerate(outlines):
-        print(i)
+    #for i in enumerate(outlines):
+    #    print(i)
 
     return outlines
 
