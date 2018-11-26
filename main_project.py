@@ -74,7 +74,7 @@ def query(output, condition):
     priceQueryPattern = "price *(?:=|>|<|>=|<=) *[0-9]+"
     locationQueryPattern = "location *= *[0-9a-zA-Z_-]+"
     catQuery = "cat *= *[0-9a-zA-Z_-]+"
-    termQuery = "[0-9a-zA-Z_-]+|[0-9a-zA-Z_-]+%"
+    termQuery = "[0-9a-zA-Z_-]+%|[0-9a-zA-Z_-]+"
     # these 2 patterns we may not be using. Maybe just for error checking to make
     # sure that the queries are inputted correctly
     expression = "{0}|{1}|{2}|{3}|{4}".format(dateQueryPattern,
@@ -320,7 +320,7 @@ def main():
     queryTerm("cAmEra%")
     queryDate("date>=2018/11/05")
     queryCats("cat=art-collectibles")
-    queryPrice("price=100")
+    queryPrice("price<=100")
     ##
 
     print("Welcome to the query interface! Please ensure that the following files")
