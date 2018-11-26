@@ -41,14 +41,15 @@ def queryTerm(tq, suffix=False):
     ## At this point, if our query has a suffix (%) it has been removed from the string and suffix is true
     ## Returns a list of tuples (b'key',b'data')
     ## THE ABOVE DATA MUST BE DECODED WHEN USED
+    tq = str.lower(tq)
     outlines = []
     db = databaseTe
     curs = db.cursor()
-    outlines.append(curs.set_range(tq.encode("utf-8")))
+    curs.set_range(tq.encode("utf-8"))
      # use the cursor
     iter = curs.current()
     while iter:
-        outlines.append(iter)
+        outlines.append(iter[1].decode("utf-8"))
         iter = curs.next_dup()
 
     if suffix:
@@ -56,10 +57,11 @@ def queryTerm(tq, suffix=False):
         nextKey = next[0].decode("utf-8")
         done = False
         if tq in nextKey and not done:
-            outlines.append(next)
+            outlines.append(next[1].decode("utf-8"))
         else:
             done = True
-
+            
+    #print(outlines)
     return outlines
 
 def termComp(ourSearchKey, treeKey):
@@ -108,7 +110,7 @@ def main():
     print("- te.idx\n")
     print("If not please make those files with the parser.py and the index.py program.\n")
     initDBs()
-    queryTerm("camera",False)
+    queryTerm("cAmEra",True)
     main_loop()
 
     print("Leaving the query interface application...Good bye!")
